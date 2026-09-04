@@ -8,9 +8,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-
   minio:
     image: minio/minio
     restart: unless-stopped
@@ -20,10 +17,6 @@ services:
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-
   backend:
     image: ghcr.io/axmetes/cicd:latest
     restart: unless-stopped
@@ -41,16 +34,14 @@ services:
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
       MINIO_BUCKET: resume-photos
     ports:
-      - "8001:8000"
-
+      - "127.0.0.1:8001:8000"
   frontend:
     image: ghcr.io/axmetes/cicd-front:latest
     restart: unless-stopped
     depends_on:
       - backend
     ports:
-      - "3000:80"
-
+      - "127.0.0.1:3000:80"
 volumes:
   postgres_data:
   minio_data:
